@@ -11,10 +11,10 @@ class ZenDeskWebHookApiView(generics.GenericAPIView):
 
     def post(self, request):
         data = request.data
-        serialized_data = serializers.TicketSerializer(data)
+        serialized_data = serializers.TicketSerializer(data=data.get('ticket'))
         ticket_subject = models.TicketSubject.objects.filter(name=settings.ZENDESK_TICKET_SUBJECT).first()
-        zendesk_user = User.objects.get(login_name=settings.ZENDESK_USER)
-        if serialized_data.is_valid():
+        zendesk_user = User.objects.get(username=settings.ZENDESK_USER)
+        if serialized_data.is_valid(raise_exception=True):
             requested_data = serialized_data.data
             try:
                 service = models.CustomerService.objects.get(username=requested_data.get('username'))
@@ -33,19 +33,20 @@ class ZenDeskWebHookApiView(generics.GenericAPIView):
                 service_ticket.created_by = zendesk_user
                 service_ticket.content = ticket_content
                 service_ticket.customerservice = service
-                service_ticket.customer = service.customer_id
+                service_ticket.customer_id = service.customer_id
                 service_ticket.save()
                 replies = requested_data.get('comments')
                 for reply in replies:
                     ticket_reply = models.Ticketreply()
                     ticket_reply.ticket_id = service_ticket.id
-                    ticket_reply.ticketreply = reply.get('description')
+                    ticket_reply.ticketreply = reply.get('description') or "empty"
                     ticket_reply.created_by = zendesk_user
                     ticket_reply.save()
 
                 return response.Response('Ticket Has Been Added Successfully', status.HTTP_200_OK)
             except Exception as e:
                 return response.Response('SomeThing Went Wrong', status.HTTP_400_BAD_REQUEST)
+        return response.Response('SomeThing Went Wrong', status.HTTP_400_BAD_REQUEST)
 
 
 class TicketList(views_generic.ListView):
