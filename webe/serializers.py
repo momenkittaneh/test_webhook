@@ -10,5 +10,4 @@ class TicketSerializer(serializers.Serializer):
     description = serializers.CharField()
     username = serializers.CharField()
     comments = TicketReplySerializer(many=True)
-    via_channel = serializers.CharField(required=False)
-    via_source = serializers.CharField(required=False)
+    via = serializers.CharField(required=False)
