@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Ticket List</h2>
+    {% for ticket in tickets %}
+        <div class="card mb-3">
+            <div class="card-header">
+                Ticket ID: {{ ticket.id }}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ ticket.subject }}</h5>
+                <p class="card-text"><strong>Status:</strong> {{ ticket.status }}</p>
+                <p class="card-text"><strong>Created on:</strong> {{ ticket.created_on }}</p>
+                <p class="card-text"><strong>Closed on:</strong> {{ ticket.closed_on }}</p>
+                <p class="card-text"><strong>Created by:</strong> {{ ticket.created_by.username }}</p>
+                <p class="card-text"><strong>Closed by:</strong> {{ ticket.closed_by.username }}</p>
+                <p class="card-text"><strong>Content:</strong> {{ ticket.content|safe }}</p>
+                <p class="card-text"><strong>Customer Service:</strong> {{ ticket.customerservice }}</p>
+                <p class="card-text"><strong>Type:</strong> {{ ticket.type }}</p>
+                <p class="card-text"><strong>Customer:</strong> {{ ticket.customer.name }}</p>
+                <h6>Replies:</h6>
+                <ul class="list-group">
+                    {% for reply in ticket.replies.all %}
+                        <li class="list-group-item">{{ reply.ticketreply }} - Replied by {{ reply.created_by.username }} on {{ reply.created_on }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
